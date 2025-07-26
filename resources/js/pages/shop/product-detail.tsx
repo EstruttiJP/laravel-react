@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Heart, Share2, Truck, Shield, RotateCcw, Star } from 'lucide-react';
+import { Inertia } from '@inertiajs/inertia';
 
 interface ProductVariant {
     id: number;
@@ -71,11 +72,10 @@ export default function ProductDetail({ product, relatedProducts }: ProductDetai
     };
 
     const addToCart = () => {
-        // Implementar lógica de adicionar ao carrinho
-        console.log('Adicionando ao carrinho:', {
-            product: product.id,
-            variants: selectedVariants,
-            quantity
+        Inertia.post('/cart/add', {
+            product_id: product.id,
+            variant_id: Object.values(selectedVariants)[0] || null,
+            quantity,
         });
     };
 

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { Inertia } from '@inertiajs/inertia';
 
 interface CartItem {
     id: number;
@@ -24,8 +25,8 @@ interface CartItem {
         value: string;
     };
     quantity: number;
-    unit_price: number;
-    total_price: number;
+    price: number; // era unit_price
+    subtotal: number; // era total_price
 }
 
 interface CartProps {
@@ -47,18 +48,20 @@ export default function Cart({ cartItems, cartTotal, shipping, tax, finalTotal }
     };
 
     const updateQuantity = (itemId: number, newQuantity: number) => {
-        // Implementar lógica de atualização via Inertia
-        console.log('Atualizando quantidade:', itemId, newQuantity);
+        if (newQuantity < 1) return;
+        Inertia.put(`/cart/update/${itemId}`, {
+            quantity: newQuantity,
+        });
     };
 
     const removeItem = (itemId: number) => {
-        // Implementar lógica de remoção via Inertia
-        console.log('Removendo item:', itemId);
+        Inertia.delete(`/cart/remove/${itemId}`);
     };
 
     const applyCoupon = () => {
-        // Implementar lógica de cupom via Inertia
-        console.log('Aplicando cupom:', couponCode);
+        Inertia.post('/cart/apply-coupon', {
+            coupon: couponCode,
+        });
     };
 
     if (cartItems.length === 0) {
@@ -124,7 +127,7 @@ export default function Cart({ cartItems, cartTotal, shipping, tax, finalTotal }
                                                 </p>
                                             )}
                                             <p className="text-sm font-medium">
-                                                {formatPrice(item.unit_price)}
+                                                {formatPrice(item.price)}
                                             </p>
                                         </div>
 
@@ -149,7 +152,7 @@ export default function Cart({ cartItems, cartTotal, shipping, tax, finalTotal }
 
                                         <div className="text-right">
                                             <p className="font-semibold">
-                                                {formatPrice(item.total_price)}
+                                                {formatPrice(item.subtotal)}
                                             </p>
                                             <Button
                                                 variant="ghost"

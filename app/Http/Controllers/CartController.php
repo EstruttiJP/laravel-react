@@ -32,8 +32,27 @@ class CartController extends Controller
         $cart = $this->getCart();
         $cart->load(['items.product', 'items.variant']);
 
-        return Inertia::render('cart/index', [
-            'cart' => $cart
+        $cartItems = $cart->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'product' => $item->product,
+                'variant' => $item->variant,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->quantity * $item->price,
+            ];
+        });
+        $cartTotal = $cartItems->sum('subtotal');
+        $shipping = 0; // Calcule conforme sua lógica
+        $tax = 0; // Calcule conforme sua lógica
+        $finalTotal = $cartTotal + $shipping + $tax;
+
+        return Inertia::render('shop/cart', [
+            'cartItems' => $cartItems,
+            'cartTotal' => $cartTotal,
+            'shipping' => $shipping,
+            'tax' => $tax,
+            'finalTotal' => $finalTotal,
         ]);
     }
 
@@ -73,7 +92,7 @@ class CartController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Produto adicionado ao carrinho!');
+        return redirect()->route('cart.index')->with('success', 'Produto adicionado ao carrinho!');
     }
 
     public function update(Request $request, CartItem $cartItem)
@@ -84,14 +103,14 @@ class CartController extends Controller
 
         $cartItem->update($validated);
 
-        return back()->with('success', 'Carrinho atualizado!');
+        return redirect()->route('cart.index')->with('success', 'Carrinho atualizado!');
     }
 
     public function remove(CartItem $cartItem)
     {
         $cartItem->delete();
 
-        return back()->with('success', 'Item removido do carrinho!');
+        return redirect()->route('cart.index')->with('success', 'Item removido do carrinho!');
     }
 
     public function clear()
@@ -153,5 +172,15 @@ class CartController extends Controller
             'message' => 'Produto adicionado ao carrinho!',
             'cart' => $cart
         ]);
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        // Lógica de cupom (exemplo)
+        $request->validate([
+            'coupon' => 'required|string',
+        ]);
+        // Aqui você pode validar o cupom e aplicar desconto no carrinho
+        return redirect()->route('cart.index')->with('success', 'Cupom aplicado!');
     }
 }
