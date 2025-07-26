@@ -1,0 +1,55 @@
+Você tem acesso total ao código deste repositório, que atualmente é um projeto Laravel + React (starter kit com autenticação). Sua tarefa é transformá-lo em uma plataforma de e-commerce altamente customizável e gerenciável, mantendo as boas práticas de arquitetura e segurança.
+
+Quero que você:
+
+Implemente módulos de e-commerce:
+
+Cadastro e gerenciamento de produtos (CRUD completo com imagens, preços, estoque, categorias, variações de produto e SKUs).
+
+Carrinho de compras persistente (usuário logado e guest).
+
+Checkout com cálculo de frete e integração com métodos de pagamento simulados (crie estrutura para adicionar gateways reais como Stripe, PagSeguro etc.).
+
+Gestão de pedidos (listagem, status, histórico de pedidos do cliente).
+
+Sistema de cupons/descontos.
+
+Crie um painel administrativo completo (Laravel + React):
+
+CRUD de categorias, produtos e variações.
+
+Gerenciamento de usuários e permissões (admin, cliente, suporte).
+
+Dashboard com métricas básicas (vendas, produtos mais vendidos, etc.).
+
+Deixe o front-end React pronto para personalização:
+
+Componentes bem estruturados para página de produto, listagem de produtos, carrinho, checkout e área do cliente.
+
+Layout modular (design system simples com Tailwind ou styled-components).
+
+Rotas protegidas e públicas organizadas.
+
+Implemente API RESTful com Laravel:
+
+Use controllers bem definidos e recursos no padrão JSON:API.
+
+Autenticação usando Laravel Sanctum ou Passport para React consumir as APIs.
+
+Escreva migrações e seeders para criar dados falsos (produtos, categorias, usuários de teste).
+
+Documente tudo:
+
+Gere um README explicando as novas funcionalidades.
+
+Crie rotas de API documentadas (pode usar Laravel API Resource + OpenAPI).
+
+Código limpo e escalável:
+
+Utilize boas práticas de Laravel (Repositories, Services, Resources).
+
+Padronize React (hooks e context API para estado global).
+
+Mantenha os testes existentes e adicione novos para produtos e pedidos.
+
+Se necessário, divida o trabalho em múltiplos PRs/commits bem descritos, para que eu possa acompanhar a evolução.
