@@ -1,8 +1,6 @@
+FROM php:8.2-fpm
 
-# Use PHP 8.2 with Apache
-FROM php:8.2-apache
-
-# Install system dependencies
+# Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,55 +12,28 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     sqlite3 \
-    libsqlite3-dev
+    libsqlite3-dev \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
+# Instalar extensões PHP
 RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Get latest Composer
+# Copiar composer da imagem oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# Definir diretório de trabalho
 WORKDIR /var/www/html
 
-# Copy existing application directory contents
-COPY . /var/www/html
-
-# Copy existing application directory permissions
+# Copiar arquivos da aplicação
 COPY --chown=www-data:www-data . /var/www/html
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Ajustar permissões das pastas necessárias
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Install Node.js dependencies and build assets
-RUN npm install
-RUN npm run build
+# Copiar e definir entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Set up Laravel
-RUN php artisan key:generate --force
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+ENTRYPOINT ["entrypoint.sh"]
 
-# Create SQLite database file
-RUN touch /var/www/html/database/database.sqlite
-RUN chown www-data:www-data /var/www/html/database/database.sqlite
-
-# Change ownership of storage and bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage
-RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
-
-# Configure Apache
-COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
-
-# Expose port 80
-EXPOSE 80
-
-# Start Apache
-CMD ["apache2-foreground"]
+CMD ["php-fpm"]
